@@ -1,0 +1,45 @@
+{
+  "name":"oneup/contao-sentry",
+  "description":"This extension connects a Contao installation with sentry.io.",
+  "keywords":["contao", "sentry", "error", "tracking", "raven"],
+  "type":"contao-module",
+  "homepage":"http://1up.io",
+  "license":"MIT",
+  "authors":[
+    {
+      "name":"David Greminger",
+      "email":"dg@1up.io",
+      "homepage":"http://1up.io",
+      "role":"Developer"
+    }
+  ],
+  "support":{
+    "email":"hello@1up.io",
+    "issues":"https://github.com/1up-lab/contao-sentry/issues",
+    "irc":"irc://irc.freenode.org/contao.dev",
+    "source":"https://github.com/1up-lab/contao-sentry"
+  },
+  "require":{
+    "php":">=7.0",
+    "contao/core-bundle":"^3.2",
+    "contao-community-alliance/composer-plugin":"~2.4 | ~3.0",
+    "sentry/sentry": "^1.6"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "~6.0"
+  },
+  "autoload": {
+    "psr-4": {
+      "Oneup\\Contao\\": "src"
+    }
+  },
+  "extra": {
+    "contao": {
+      "sources": {
+        "contao": "system/modules/!contao-sentry"
+      }
+    }
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true
+}
