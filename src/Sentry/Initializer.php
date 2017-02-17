@@ -27,9 +27,10 @@ class Initializer
         $this->registerExceptionHandler = (bool) Config::get('sentryPHPRegisterExceptionHandler');
         $this->registerErrorHandler = (bool) Config::get('sentryPHPRegisterErrorHandler');
         $this->registerShutdownFunction = (bool) Config::get('sentryPHPRegisterShutdownFunction');
+        $GLOBALS['CONTAO_SENTRY'] = '';
     }
 
-    public function initializePHP()
+    public function initialize()
     {
         if (false === $this->useSentry) {
             return;
@@ -51,36 +52,10 @@ class Initializer
                 $errorHandler->registerShutdownFunction();
             }
         }
-    }
-
-    public function initializeJS()
-    {
-        if (false === $this->useSentry) {
-            return;
-        }
 
         if (true === $this->enableJS && '' !== $this->publicDsn) {
-            if (null === $GLOBALS['TL_JAVASCRIPT']) {
-                $GLOBALS['TL_JAVASCRIPT'] = [];
-            }
-
-            if (null === $GLOBALS['TL_BODY']) {
-                $GLOBALS['TL_BODY'] = [];
-            }
-
-            // put in first place
-            $GLOBALS['TL_JAVASCRIPT'] = array_merge(
-                ['https://cdn.ravenjs.com/3.10.0/raven.min.js'],
-                $GLOBALS['TL_JAVASCRIPT']
-            );
-
-            $GLOBALS['TL_BODY'] = array_merge(
-                [sprintf(
-                    '<script type="text/javascript">Raven.config(\'%s\').install();</script>',
-                    $this->publicDsn
-                )],
-                $GLOBALS['TL_BODY']
-            );
+            $GLOBALS['CONTAO_SENTRY'] .= "<script type=\"text/javascript\">https://cdn.ravenjs.com/3.10.0/raven.min.js</script>\n";
+            $GLOBALS['CONTAO_SENTRY'] .= sprintf("<script type=\"text/javascript\">Raven.config('%s').install();</script>\n", $this->publicDsn);
         }
     }
 }
