@@ -3,6 +3,9 @@
 namespace Oneup\Contao\Sentry;
 
 use Contao\Config;
+use Contao\LayoutModel;
+use Contao\PageModel;
+use Contao\PageRegular;
 use Raven_Client;
 use Raven_ErrorHandler;
 
@@ -27,10 +30,13 @@ class Initializer
         $this->registerExceptionHandler = (bool) Config::get('sentryPHPRegisterExceptionHandler');
         $this->registerErrorHandler = (bool) Config::get('sentryPHPRegisterErrorHandler');
         $this->registerShutdownFunction = (bool) Config::get('sentryPHPRegisterShutdownFunction');
-        $GLOBALS['CONTAO_SENTRY'] = '';
+
+        if (!is_array($GLOBALS['CONTAO_SENTRY'])) {
+            $GLOBALS['CONTAO_SENTRY'] = [];
+        }
     }
 
-    public function initialize()
+    public function initializePHP()
     {
         if (false === $this->useSentry) {
             return;
@@ -52,10 +58,35 @@ class Initializer
                 $errorHandler->registerShutdownFunction();
             }
         }
+    }
+
+    public function initializeJS(PageModel $objPage, LayoutModel $objLayout, PageRegular $objPageRegular)
+    {
+        if (false === $this->useSentry) {
+            return;
+        }
 
         if (true === $this->enableJS && '' !== $this->publicDsn) {
-            $GLOBALS['CONTAO_SENTRY'] .= "<script type=\"text/javascript\">https://cdn.ravenjs.com/3.10.0/raven.min.js</script>\n";
-            $GLOBALS['CONTAO_SENTRY'] .= sprintf("<script type=\"text/javascript\">Raven.config('%s').install();</script>\n", $this->publicDsn);
+            $GLOBALS['CONTAO_SENTRY'] = array_merge(
+                ['<script type="text/javascript" src="https://cdn.ravenjs.com/3.10.0/raven.min.js"></script>'],
+                $GLOBALS['CONTAO_SENTRY']
+            );
+
+            $GLOBALS['CONTAO_SENTRY'] = array_merge(
+                $GLOBALS['CONTAO_SENTRY'],
+                [
+                    sprintf(
+                        "<script type=\"text/javascript\">Raven.config('%s').install();</script>",
+                        $this->publicDsn
+                    )
+                ]
+            );
+
+            $GLOBALS['SENTRY'] = '';
+
+            foreach ($GLOBALS['CONTAO_SENTRY'] as $item) {
+                $GLOBALS['SENTRY'] .= sprintf("%s\n", trim($item));
+            }
         }
     }
 }
