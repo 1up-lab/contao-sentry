@@ -68,7 +68,7 @@ class Initializer
 
         if (true === $this->enableJS && '' !== $this->publicDsn) {
             $GLOBALS['CONTAO_SENTRY'] = array_merge(
-                ['<script type="text/javascript" src="https://cdn.ravenjs.com/3.10.0/raven.min.js"></script>'],
+                ['<script type="text/javascript" src="https://cdn.ravenjs.com/3.12.1/raven.min.js"></script>'],
                 $GLOBALS['CONTAO_SENTRY']
             );
 
