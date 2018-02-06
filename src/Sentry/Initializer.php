@@ -100,17 +100,17 @@ class Initializer
 
     protected function hasAuthenticatedUser()
     {
-        $user = false;
+        $authenticated = false;
 
         if ('FE' === TL_MODE) {
-            $user = FrontendUser::getInstance()->authenticate();
+            $authenticated = FrontendUser::getInstance()->authenticate();
         }
 
         if ('BE' === TL_MODE) {
-            $user = BackendUser::getInstance()->authenticate();
+            $authenticated = BackendUser::getInstance()->authenticate();
         }
 
-        return $user;
+        return $authenticated;
     }
 
     protected function getUserData()
