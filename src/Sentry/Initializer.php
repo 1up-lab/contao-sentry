@@ -2,10 +2,13 @@
 
 namespace Oneup\Contao\Sentry;
 
+use Contao\BackendUser;
 use Contao\Config;
+use Contao\FrontendUser;
 use Contao\LayoutModel;
 use Contao\PageModel;
 use Contao\PageRegular;
+use Contao\User;
 use Raven_Client;
 use Raven_ErrorHandler;
 
@@ -44,6 +47,11 @@ class Initializer
 
         if (true === $this->enablePHP && '' !== $this->dsn) {
             $client = new Raven_Client($this->dsn);
+
+            if ($this->hasAuthenticatedUser()) {
+                $client->user_context($this->getUserData());
+            }
+
             $errorHandler = new Raven_ErrorHandler($client);
 
             if (true === $this->registerExceptionHandler) {
@@ -88,5 +96,45 @@ class Initializer
                 $GLOBALS['SENTRY'] .= sprintf("%s\n", trim($item));
             }
         }
+    }
+
+    protected function hasAuthenticatedUser()
+    {
+        $user = false;
+
+        if ('FE' === TL_MODE) {
+            $user = FrontendUser::getInstance()->authenticate();
+        }
+
+        if ('BE' === TL_MODE) {
+            $user = BackendUser::getInstance()->authenticate();
+        }
+
+        return $user;
+    }
+
+    protected function getUserData()
+    {
+        $user = null;
+        $data = [];
+
+        if ('FE' === TL_MODE) {
+            $user = FrontendUser::getInstance()->getData();
+        }
+
+        if ('BE' === TL_MODE) {
+            $user = BackendUser::getInstance()->getData();
+        }
+
+        if (is_array($user)) {
+            $data = [
+                'id' => $user['id'],
+                'username' => $user['username'],
+                'name' => array_key_exists('name', $user) ? $user['name'] : sprintf('%s %s', $user['firstname'], $user['lastname']),
+                'email' => $user['email'],
+            ];
+        }
+
+        return $data;
     }
 }
