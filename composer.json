@@ -3,13 +3,13 @@
   "description":"This extension connects a Contao installation with sentry.io.",
   "keywords":["contao", "sentry", "error", "tracking", "raven"],
   "type":"contao-module",
-  "homepage":"http://1up.io",
+  "homepage":"https://github.com/1up-lab/contao-sentry",
   "license":"MIT",
   "authors":[
     {
       "name":"David Greminger",
       "email":"dg@1up.io",
-      "homepage":"http://1up.io",
+      "homepage":"https://github.com/bytehead",
       "role":"Developer"
     }
   ],
