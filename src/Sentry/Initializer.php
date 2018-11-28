@@ -37,6 +37,10 @@ class Initializer
         if (!is_array($GLOBALS['CONTAO_SENTRY'])) {
             $GLOBALS['CONTAO_SENTRY'] = [];
         }
+
+        if (!defined('BE_USER_LOGGED_IN')) {
+            define('BE_USER_LOGGED_IN', false);
+        }
     }
 
     public function initializePHP()
