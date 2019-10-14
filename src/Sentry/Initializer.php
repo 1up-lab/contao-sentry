@@ -38,8 +38,12 @@ class Initializer
             $GLOBALS['CONTAO_SENTRY'] = [];
         }
 
-        if (!defined('BE_USER_LOGGED_IN')) {
-            define('BE_USER_LOGGED_IN', false);
+        if (TL_MODE === 'FE') {
+            if (empty(\Input::cookie('BE_USER_AUTH')) || empty(\Input::cookie('FE_PREVIEW'))) {
+                define('BE_USER_LOGGED_IN', false);
+            } else {
+                define('BE_USER_LOGGED_IN', true);
+            }
         }
     }
 
